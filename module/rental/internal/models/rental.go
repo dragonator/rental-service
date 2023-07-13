@@ -27,3 +27,6 @@ type Rental struct {
 
 	User *User
 }
+
+// Rentals is a slice of Rental objects.
+type Rentals []*Rental
