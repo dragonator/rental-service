@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-// Rental - a model for the rental entity.
+// Rental is a model for the rental entity.
 type Rental struct {
 	ID              int32
 	UserID          int32

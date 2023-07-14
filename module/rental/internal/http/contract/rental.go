@@ -1,17 +1,18 @@
 package contract
 
-type GetRentalByIDRequest struct{}
-
+// User is a contract for the user object.
 type User struct {
 	ID        int32  `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 }
 
+// Price is a contract for the price object.
 type Price struct {
 	Day int64 `json:"day"`
 }
 
+// Location is a contract for the location object.
 type Location struct {
 	City      string  `json:"city"`
 	State     string  `json:"state"`
@@ -21,6 +22,7 @@ type Location struct {
 	Longitude float32 `json:"lng"`
 }
 
+// GetRentalByIDResponse is a server response getting a single rental by id.
 type GetRentalByIDResponse struct {
 	ID              int32   `json:"id"`
 	Name            string  `json:"name"`

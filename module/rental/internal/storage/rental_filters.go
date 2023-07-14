@@ -12,7 +12,7 @@ type Location struct {
 	Longitude float32
 }
 
-// RentalFilters - a filters type to be used for listing rentals.
+// RentalFilters is a filters type to be used for listing rentals.
 type RentalFilters struct {
 	Pagination
 	IDs      []string
