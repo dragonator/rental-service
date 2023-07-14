@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dragonator/rental-service/module/rental/internal/models"
+	model "github.com/dragonator/rental-service/module/rental/internal/model"
 	"github.com/dragonator/rental-service/pkg/config"
 )
 
@@ -60,7 +60,7 @@ func NewRentalRepository(config *config.Config, db *sql.DB) *RentalRepository {
 
 // GetByID returns a single rental object corresponding to the requested id.
 // If no such rental exists it returns an error.
-func (rr *RentalRepository) GetByID(ctx context.Context, rentalID int) (*models.Rental, error) {
+func (rr *RentalRepository) GetByID(ctx context.Context, rentalID int) (*model.Rental, error) {
 	qb := NewQueryBuilder().
 		Select().
 		Columns(rentalColums...).
@@ -78,8 +78,8 @@ func (rr *RentalRepository) GetByID(ctx context.Context, rentalID int) (*models.
 }
 
 // List returns a list of rentals based on the given filters. If no results are found it returns an empty list.
-func (rr *RentalRepository) List(ctx context.Context, filters *RentalFilters) (models.Rentals, error) {
-	rentals := make(models.Rentals, 0, 10)
+func (rr *RentalRepository) List(ctx context.Context, filters *RentalFilters) (model.Rentals, error) {
+	rentals := make(model.Rentals, 0, 10)
 
 	sqlQuery := rr.buildListQuery(filters)
 
@@ -169,9 +169,9 @@ func changeColumnTable(oldPrefix string, newPrefix string, columns ...string) []
 	return newColumns
 }
 
-func scanRental(row rowScanner) (*models.Rental, error) {
-	rental := new(models.Rental)
-	rental.User = new(models.User)
+func scanRental(row rowScanner) (*model.Rental, error) {
+	rental := new(model.Rental)
+	rental.User = new(model.User)
 
 	if err := row.Scan(
 		&rental.ID,
