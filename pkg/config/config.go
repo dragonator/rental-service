@@ -5,14 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 var errUndefinedEnvVar = errors.New("undefined environment variable")
 
 // Config hold the service config.
 type Config struct {
-	Database    *Database
-	LoggerLevel string
+	Database            *Database
+	LoggerLevel         string
+	NearThresholdRadius int
 }
 
 // New is a constructor function for Config.
@@ -27,8 +29,19 @@ func New() (*Config, error) {
 		return nil, fmt.Errorf("%w: LOGGER_LEVEL", errUndefinedEnvVar)
 	}
 
+	nearThresholdRadius, defined := os.LookupEnv("NEAR_THRESHOLD_RADIUS_IN_MILES")
+	if !defined {
+		return nil, fmt.Errorf("%w: NEAR_THRESHOLD_RADIUS_IN_MILES", errUndefinedEnvVar)
+	}
+
+	nearThresholdRadiusInMiles, err := strconv.Atoi(nearThresholdRadius)
+	if err != nil {
+		panic(fmt.Errorf("invalid value for NEAR_THRESHOLD_RADIUS_IN_MILES"))
+	}
+
 	return &Config{
-		Database:    db,
-		LoggerLevel: loggerLevel,
+		Database:            db,
+		LoggerLevel:         loggerLevel,
+		NearThresholdRadius: nearThresholdRadiusInMiles,
 	}, nil
 }
