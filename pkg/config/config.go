@@ -13,6 +13,7 @@ var errUndefinedEnvVar = errors.New("undefined environment variable")
 // Config hold the service config.
 type Config struct {
 	Database            *Database
+	ServerPort          string
 	LoggerLevel         string
 	NearThresholdRadius int
 }
@@ -22,6 +23,11 @@ func New() (*Config, error) {
 	db, err := NewDatabase()
 	if err != nil {
 		return nil, err
+	}
+
+	serverPort, defined := os.LookupEnv("SERVER_PORT")
+	if !defined {
+		return nil, fmt.Errorf("%w: SERVER_PORT", errUndefinedEnvVar)
 	}
 
 	loggerLevel, defined := os.LookupEnv("LOGGER_LEVEL")
@@ -41,6 +47,7 @@ func New() (*Config, error) {
 
 	return &Config{
 		Database:            db,
+		ServerPort:          serverPort,
 		LoggerLevel:         loggerLevel,
 		NearThresholdRadius: nearThresholdRadiusInMiles,
 	}, nil
