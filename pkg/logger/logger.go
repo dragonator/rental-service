@@ -52,8 +52,8 @@ func NewLogger(logLevel string) *Logger {
 		},
 		Encoding:         "json",
 		EncoderConfig:    encodingConfig,
-		OutputPaths:      []string{"stdout", "app.log"},
-		ErrorOutputPaths: []string{"stderr", "app.log"},
+		OutputPaths:      []string{"stdout", "server.log"},
+		ErrorOutputPaths: []string{"stderr", "server.log"},
 	}
 
 	core, err := config.Build()
