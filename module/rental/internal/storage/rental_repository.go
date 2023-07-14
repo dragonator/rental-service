@@ -60,7 +60,7 @@ func NewRentalRepository(config *config.Config, db *sql.DB) *RentalRepository {
 
 // GetByID returns a single rental object corresponding to the requested id.
 // If no such rental exists it returns an error.
-func (rr *RentalRepository) GetByID(ctx context.Context, rentalID int) (*model.Rental, error) {
+func (rr *RentalRepository) GetByID(ctx context.Context, rentalID string) (*model.Rental, error) {
 	qb := NewQueryBuilder().
 		Select().
 		Columns(rentalColums...).

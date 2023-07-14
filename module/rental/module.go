@@ -1,17 +1,19 @@
 package rental
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/dragonator/rental-service/module/rental/internal/db"
+	"github.com/dragonator/rental-service/module/rental/internal/http/handler"
+	"github.com/dragonator/rental-service/module/rental/internal/http/service"
+	"github.com/dragonator/rental-service/module/rental/internal/operation/rentalfetching"
 	"github.com/dragonator/rental-service/module/rental/internal/storage"
 	"github.com/dragonator/rental-service/pkg/config"
 	"github.com/dragonator/rental-service/pkg/logger"
 )
 
 type RentalModule struct {
-	Storage *storage.RentalRepository
+	RentalService *service.Service
 }
 
 func NewRentalModule(config *config.Config, logger *logger.Logger) (*RentalModule, error) {
@@ -20,36 +22,18 @@ func NewRentalModule(config *config.Config, logger *logger.Logger) (*RentalModul
 		return nil, fmt.Errorf("creating rental model: %w", err)
 	}
 
-	rm := &RentalModule{
-		Storage: storage.NewRentalRepository(config, db),
-	}
+	rentalStore := storage.NewRentalRepository(config, db)
+	rentalFetchingOp := rentalfetching.NewOperation(rentalStore)
+	rentalHandler := handler.NewRentalHandler(rentalFetchingOp)
+	router := service.NewRouter(rentalHandler)
 
-	rentals, err := rm.Storage.List(context.Background(), &storage.RentalFilters{
-		Pagination: storage.Pagination{
-			// Limit: toPtr(3),
-			// Offset: toPtr(3),
-		},
-		// PriceMin: toPtr(int64(9000)),
-		// PriceMax: toPtr(int64(13000)),
-		// OrderBy:  toPtr("price_per_day"),
-		// IDs:      []string{"24", "26"},
-		Near: &storage.Location{
-			Latitude:  33.64,
-			Longitude: -117.93,
-		},
-	})
+	rentalService, err := service.New(config, logger, router)
 	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(len(rentals))
-	fmt.Println(rentals)
-	for _, r := range rentals {
-		fmt.Println(r.ID)
+		return nil, fmt.Errorf("creating rental model: %w", err)
 	}
 
 	return &RentalModule{
-		Storage: storage.NewRentalRepository(config, db),
+		RentalService: rentalService,
 	}, nil
 }
 

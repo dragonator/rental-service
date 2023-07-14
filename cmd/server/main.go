@@ -1,6 +1,11 @@
 package main
 
 import (
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/dragonator/rental-service/module/rental"
 	"github.com/dragonator/rental-service/pkg/config"
 	"github.com/dragonator/rental-service/pkg/logger"
@@ -14,16 +19,18 @@ func main() {
 
 	logger := logger.NewLogger(cfg.LoggerLevel)
 
-	_, err = rental.NewRentalModule(cfg, logger)
+	rentalModule, err := rental.NewRentalModule(cfg, logger)
 	if err != nil {
 		panic(err)
 	}
 
-	// a, err := rentalModule.Storage.GetByID(context.Background(), 1)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	rentalModule.RentalService.Start()
 
-	// fmt.Println(a)
-	// fmt.Println(a.User)
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+	sig := <-stop
+
+	log.Printf("Signal caught (%s), stopping...", sig.String())
+	rentalModule.RentalService.Stop()
+	log.Print("Service stopped.")
 }
