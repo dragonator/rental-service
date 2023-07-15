@@ -6,13 +6,12 @@ import (
 	"net/http"
 
 	"github.com/dragonator/rental-service/module/rental/internal/http/contract"
+	"github.com/dragonator/rental-service/module/rental/internal/http/service/svc"
 	"github.com/dragonator/rental-service/module/rental/internal/model"
 	"github.com/dragonator/rental-service/module/rental/internal/storage"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/schema"
 )
-
-var _invalidParameter = "invalid parameter: %s"
 
 // RentalFetchingOp is a contract to a rental fetching operation.
 type RentalFetchingOp interface {
@@ -72,11 +71,11 @@ func rentalFiltersFromRequest(r *http.Request) (*storage.RentalFilters, error) {
 	var query contract.ListRentalsQuery
 
 	if err := r.ParseForm(); err != nil {
-		return nil, fmt.Errorf("parsing form: %w", err)
+		return nil, fmt.Errorf("%w: parsing form: %w", svc.ErrInvalidQueryParameters, err)
 	}
 
 	if err := schema.NewDecoder().Decode(&query, r.Form); err != nil {
-		return nil, fmt.Errorf("unmashalling query: %w", err)
+		return nil, fmt.Errorf("%w: unmashalling query: %w", svc.ErrInvalidQueryParameters, err)
 	}
 
 	filters := &storage.RentalFilters{
@@ -92,7 +91,7 @@ func rentalFiltersFromRequest(r *http.Request) (*storage.RentalFilters, error) {
 
 	if len(query.Near) > 0 {
 		if len(query.Near) != 2 {
-			return nil, fmt.Errorf(_invalidParameter, "near")
+			return nil, fmt.Errorf("%w: invalid number of values for near (expected 2)", svc.ErrInvalidQueryParameters)
 		}
 
 		filters.Near = &storage.Location{
