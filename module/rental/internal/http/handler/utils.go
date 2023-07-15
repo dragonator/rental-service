@@ -16,10 +16,15 @@ const (
 	_noSniff               = "nosniff"
 )
 
+type multiError interface {
+	Unwrap() []error
+}
+
 func errorResponse(w http.ResponseWriter, err error) {
-	er := &contract.ErrorResponse{Message: err.Error()}
 	w.Header().Set(_contentTypeHeaderName, _contentTypeJSON)
 	w.Header().Set(_xContentTypeOptions, _noSniff)
+
+	er := toErrorResponse(err)
 
 	var e *svc.Error
 	if errors.As(err, &e) {
@@ -30,6 +35,28 @@ func errorResponse(w http.ResponseWriter, err error) {
 
 	w.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(w).Encode(er)
+}
+
+func toErrorResponse(err error) *contract.ErrorResponse {
+	var er *contract.ErrorResponse
+
+	switch e := err.(type) {
+	case multiError:
+		errs := e.Unwrap()
+
+		er = &contract.ErrorResponse{
+			Errors: make([]string, 0, len(errs)),
+		}
+
+		for _, err := range errs {
+			er.Errors = append(er.Errors, err.Error())
+		}
+
+	default:
+		er = &contract.ErrorResponse{Error: e.Error()}
+	}
+
+	return er
 }
 
 func successResponse(w http.ResponseWriter, resp interface{}) {
