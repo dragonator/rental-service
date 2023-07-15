@@ -25,3 +25,6 @@ go.work
 
 # Log files
 server.log
+
+# VScode
+cmd/server/__debug_bin*
