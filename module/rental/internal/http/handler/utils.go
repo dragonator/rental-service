@@ -29,6 +29,7 @@ func errorResponse(w http.ResponseWriter, err error) {
 	}
 
 	w.WriteHeader(http.StatusInternalServerError)
+	er.Message = http.StatusText(http.StatusInternalServerError)
 	json.NewEncoder(w).Encode(er)
 }
 
