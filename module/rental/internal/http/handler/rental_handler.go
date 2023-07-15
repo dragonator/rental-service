@@ -215,6 +215,11 @@ func toRentalContract(rental *model.Rental) *contract.Rental {
 			Latitude:  rental.Latitude,
 			Longitude: rental.Longitude,
 		},
+		User: contract.User{
+			ID:        rental.User.ID,
+			FirstName: rental.User.FirstName,
+			LastName:  rental.User.LastName,
+		},
 	}
 }
 

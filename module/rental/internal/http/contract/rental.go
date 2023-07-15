@@ -36,6 +36,7 @@ type Rental struct {
 	PrimaryImageURL string  `json:"primary_image_url"`
 	Price           Price
 	Location        Location
+	User            User
 }
 
 // GetRentalByIDResponse is a server response getting a single rental by id.
