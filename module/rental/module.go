@@ -12,10 +12,18 @@ import (
 	"github.com/dragonator/rental-service/pkg/logger"
 )
 
-type RentalModule struct {
-	RentalService *service.Service
+// RentalService provides methods for starting and stopping a rental service.
+type RentalService interface {
+	Start()
+	Stop()
 }
 
+// RentalModule provides access to the functionality of rental module.
+type RentalModule struct {
+	RentalService RentalService
+}
+
+// NewRentalModule is a construction function for RentalModule.
 func NewRentalModule(config *config.Config, logger *logger.Logger) (*RentalModule, error) {
 	db, err := db.OpenPGX(config, logger.Desugar())
 	if err != nil {
@@ -35,8 +43,4 @@ func NewRentalModule(config *config.Config, logger *logger.Logger) (*RentalModul
 	return &RentalModule{
 		RentalService: rentalService,
 	}, nil
-}
-
-func toPtr[T any](v T) *T {
-	return &v
 }

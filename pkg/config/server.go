@@ -13,7 +13,7 @@ type Server struct {
 func NewServer() (*Server, error) {
 	port, defined := os.LookupEnv("SERVER_PORT")
 	if !defined {
-		return nil, fmt.Errorf("%w: SERVER_PORT", errUndefinedEnvVar)
+		return nil, fmt.Errorf("%w: SERVER_PORT", _errUndefinedEnvVar)
 	}
 
 	return &Server{

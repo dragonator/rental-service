@@ -2,7 +2,10 @@ package svc
 
 import "net/http"
 
-var ErrInvalidQueryParameters = &Error{StatusCode: http.StatusBadRequest, Message: "invalid query parameters"}
+// Predefined errors.
+var (
+	ErrInvalidQueryParameters = &Error{StatusCode: http.StatusBadRequest, Message: "invalid query parameters"}
+)
 
 // Error represets a server error.
 type Error struct {

@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi"
+	"github.com/gorilla/schema"
+
 	"github.com/dragonator/rental-service/module/rental/internal/http/contract"
 	"github.com/dragonator/rental-service/module/rental/internal/http/service/svc"
 	"github.com/dragonator/rental-service/module/rental/internal/model"
 	"github.com/dragonator/rental-service/module/rental/internal/storage"
-	"github.com/go-chi/chi"
-	"github.com/gorilla/schema"
 )
 
 // RentalFetchingOp is a contract to a rental fetching operation.

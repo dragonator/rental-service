@@ -22,6 +22,7 @@ type RentalFilters struct {
 	OrderBy  *string
 }
 
+// RentalSortFields defines allowed fields for sorting.
 var RentalSortFields = map[string]*struct{}{
 	"ids":       nil,
 	"price_min": nil,
