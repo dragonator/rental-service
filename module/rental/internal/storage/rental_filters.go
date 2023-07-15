@@ -15,7 +15,7 @@ type Location struct {
 // RentalFilters is a filters type to be used for listing rentals.
 type RentalFilters struct {
 	Pagination
-	IDs      []string
+	IDs      []int32
 	PriceMin *int64
 	PriceMax *int64
 	Near     *Location

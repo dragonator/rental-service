@@ -2,16 +2,14 @@ package handler
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/dragonator/rental-service/module/rental/internal/http/contract"
 	"github.com/dragonator/rental-service/module/rental/internal/model"
 	"github.com/dragonator/rental-service/module/rental/internal/storage"
 	"github.com/go-chi/chi"
+	"github.com/gorilla/schema"
 )
 
 var _invalidParameter = "invalid parameter: %s"
@@ -71,125 +69,39 @@ func (rh *RentalHandler) ListRentals(method, path string) func(w http.ResponseWr
 }
 
 func rentalFiltersFromRequest(r *http.Request) (*storage.RentalFilters, error) {
-	ids := parseIDs(r)
-	priceMin, errMin := parsePriceMin(r)
-	priceMax, errMax := parsePriceMax(r)
-	near, errNear := parseNear(r)
-	sort, errSort := parseSort(r)
-	limit, errLimit := parseLimit(r)
-	offset, errOffset := parseOffset(r)
+	var query contract.ListRentalsQuery
 
-	err := errors.Join(errMin, errMax, errNear, errSort, errLimit, errOffset)
-	if err != nil {
-		return nil, err
+	if err := r.ParseForm(); err != nil {
+		return nil, fmt.Errorf("parsing form: %w", err)
 	}
 
-	return &storage.RentalFilters{
-		IDs:      ids,
-		PriceMin: priceMin,
-		PriceMax: priceMax,
-		Near:     near,
-		OrderBy:  sort,
+	if err := schema.NewDecoder().Decode(&query, r.Form); err != nil {
+		return nil, fmt.Errorf("unmashalling query: %w", err)
+	}
+
+	filters := &storage.RentalFilters{
+		IDs:      query.Ids,
+		PriceMin: query.PriceMin,
+		PriceMax: query.PriceMax,
+		OrderBy:  query.Sort,
 		Pagination: storage.Pagination{
-			Limit:  limit,
-			Offset: offset,
+			Limit:  query.Limit,
+			Offset: query.Offset,
 		},
-	}, nil
-}
-
-func parseIDs(r *http.Request) []string {
-	if ids := r.URL.Query().Get("ids"); len(ids) != 0 {
-		return strings.Split(ids, ",")
 	}
 
-	return nil
-}
-
-func parsePriceMin(r *http.Request) (*int64, error) {
-	if priceMin := r.URL.Query().Get("price_min"); len(priceMin) != 0 {
-		pm, err := strconv.ParseInt(priceMin, 10, 64)
-		if err != nil {
-			return nil, fmt.Errorf(_invalidParameter, "price_min")
-		}
-
-		return &pm, nil
-	}
-
-	return nil, nil
-}
-
-func parsePriceMax(r *http.Request) (*int64, error) {
-	if priceMax := r.URL.Query().Get("price_max"); len(priceMax) != 0 {
-		pm, err := strconv.ParseInt(priceMax, 10, 64)
-		if err != nil {
-			return nil, fmt.Errorf(_invalidParameter, "price_max")
-		}
-
-		return &pm, nil
-	}
-
-	return nil, nil
-}
-
-func parseNear(r *http.Request) (*storage.Location, error) {
-	if near := r.URL.Query().Get("near"); len(near) != 0 {
-		near := strings.Split(near, ",")
-
-		if len(near) != 2 {
+	if len(query.Near) > 0 {
+		if len(query.Near) != 2 {
 			return nil, fmt.Errorf(_invalidParameter, "near")
 		}
 
-		lat, err1 := strconv.ParseFloat(near[0], 64)
-		lng, err2 := strconv.ParseFloat(near[1], 64)
-		if err1 != nil || err2 != nil {
-			return nil, errors.New("invalid argument: near")
+		filters.Near = &storage.Location{
+			Latitude:  query.Near[0],
+			Longitude: query.Near[1],
 		}
-
-		return &storage.Location{
-			Latitude:  float32(lat),
-			Longitude: float32(lng),
-		}, nil
 	}
 
-	return nil, nil
-}
-
-func parseSort(r *http.Request) (*string, error) {
-	if sort := r.URL.Query().Get("sort"); len(sort) != 0 {
-		if _, ok := storage.RentalSortFields[sort]; !ok {
-			return nil, errors.New("invalid argument: near")
-		}
-
-		return &sort, nil
-	}
-
-	return nil, nil
-}
-
-func parseLimit(r *http.Request) (*int, error) {
-	if limit := r.URL.Query().Get("limit"); len(limit) != 0 {
-		lim, err := strconv.Atoi(limit)
-		if err != nil {
-			return nil, fmt.Errorf(_invalidParameter, "limit")
-		}
-
-		return &lim, nil
-	}
-
-	return nil, nil
-}
-
-func parseOffset(r *http.Request) (*int, error) {
-	if offset := r.URL.Query().Get("offset"); len(offset) != 0 {
-		os, err := strconv.Atoi(offset)
-		if err != nil {
-			return nil, fmt.Errorf(_invalidParameter, "offset")
-		}
-
-		return &os, nil
-	}
-
-	return nil, nil
+	return filters, nil
 }
 
 func toRentalContract(rental *model.Rental) *contract.Rental {

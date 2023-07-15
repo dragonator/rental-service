@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 
 	model "github.com/dragonator/rental-service/module/rental/internal/model"
@@ -111,7 +112,12 @@ func (rr *RentalRepository) buildListQuery(f *RentalFilters) string {
 		Join("users ON users.id = rentals.user_id")
 
 	if len(f.IDs) > 0 {
-		qb.Where(fmt.Sprintf("rentals.id IN (%s)", strings.Join(f.IDs, ",")))
+		ids := make([]string, 0, len(f.IDs))
+		for _, id := range f.IDs {
+			ids = append(ids, strconv.Itoa(int(id)))
+		}
+
+		qb.Where(fmt.Sprintf("rentals.id IN (%s)", strings.Join(ids, ",")))
 	}
 
 	if f.PriceMin != nil {

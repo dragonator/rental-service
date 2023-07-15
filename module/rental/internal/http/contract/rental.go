@@ -39,6 +39,17 @@ type Rental struct {
 	User            User
 }
 
+// ListRentalsQuery is used to decode the query parameters of ListRentals.
+type ListRentalsQuery struct {
+	Ids      []int32   `schema:"ids"`
+	PriceMin *int64    `schema:"price_min"`
+	PriceMax *int64    `schema:"price_max"`
+	Near     []float32 `schema:"near"`
+	Limit    *int      `schema:"limit"`
+	Offset   *int      `schema:"offset"`
+	Sort     *string   `schema:"sort"`
+}
+
 // GetRentalByIDResponse is a server response getting a single rental by id.
 type GetRentalByIDResponse Rental
 
