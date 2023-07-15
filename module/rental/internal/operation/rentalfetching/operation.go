@@ -21,7 +21,7 @@ func NewOperation(rentalStore RentalStore) *Operation {
 }
 
 // GetRentalByID returns a rental for the given id.
-func (o *Operation) GetRentalByID(ctx context.Context, rentalID string) (*model.Rental, error) {
+func (o *Operation) GetRentalByID(ctx context.Context, rentalID int) (*model.Rental, error) {
 	rental, err := o.rentalStore.GetByID(ctx, rentalID)
 	if err != nil {
 		return nil, fmt.Errorf("operation GetRentalByID: %w", err)

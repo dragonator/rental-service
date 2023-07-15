@@ -19,7 +19,6 @@ import (
 
 var (
 	_nearThresholdRadius = 100
-	_rentalIDParam       = "1"
 	_rental              = &model.Rental{
 		ID:              1,
 		UserID:          2,

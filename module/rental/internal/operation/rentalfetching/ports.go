@@ -9,6 +9,6 @@ import (
 
 // RentalStore is a contract to a rental storage.
 type RentalStore interface {
-	GetByID(ctx context.Context, rentalID string) (*model.Rental, error)
+	GetByID(ctx context.Context, rentalID int) (*model.Rental, error)
 	List(ctx context.Context, filters *storage.RentalFilters) (model.Rentals, error)
 }

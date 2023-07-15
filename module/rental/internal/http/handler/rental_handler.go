@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/schema"
@@ -16,7 +17,7 @@ import (
 
 // RentalFetchingOp is a contract to a rental fetching operation.
 type RentalFetchingOp interface {
-	GetRentalByID(ctx context.Context, rentalID string) (*model.Rental, error)
+	GetRentalByID(ctx context.Context, rentalID int) (*model.Rental, error)
 	ListRentals(ctx context.Context, filters *storage.RentalFilters) (model.Rentals, error)
 }
 
@@ -35,7 +36,13 @@ func NewRentalHandler(rentalFetchingOp RentalFetchingOp) *RentalHandler {
 // GetRentalByID returns a handle that is fetching a rental by id.
 func (rh *RentalHandler) GetRentalByID(method, path string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rental, err := rh.rentalFetchingOp.GetRentalByID(r.Context(), chi.URLParam(r, "id"))
+		rentalID, err := strconv.Atoi(chi.URLParam(r, "id"))
+		if err != nil {
+			errorResponse(w, fmt.Errorf("%w: id", svc.ErrInvalidQueryParameters))
+			return
+		}
+
+		rental, err := rh.rentalFetchingOp.GetRentalByID(r.Context(), rentalID)
 		if err != nil {
 			errorResponse(w, err)
 			return
