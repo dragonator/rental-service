@@ -8,6 +8,7 @@ import (
 
 type RentalHandler interface {
 	GetRentalByID(method, path string) func(w http.ResponseWriter, r *http.Request)
+	ListRentals(method, path string) func(w http.ResponseWriter, r *http.Request)
 }
 
 // NewRouter is a construction function for router that handles operations for rentals.
@@ -21,6 +22,7 @@ func NewRouter(rh RentalHandler) http.Handler {
 		HandleFunc func(string, string) func(w http.ResponseWriter, r *http.Request)
 	}{
 		{router.Get, "GET", "/rental/{id}", rh.GetRentalByID},
+		{router.Get, "GET", "/rentals", rh.ListRentals},
 	}
 
 	for _, endpoint := range api {

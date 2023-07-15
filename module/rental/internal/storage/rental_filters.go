@@ -21,3 +21,13 @@ type RentalFilters struct {
 	Near     *Location
 	OrderBy  *string
 }
+
+var RentalSortFields = map[string]*struct{}{
+	"ids":       nil,
+	"price_min": nil,
+	"price_max": nil,
+	"near":      nil,
+	"sort":      nil,
+	"limit":     nil,
+	"offset":    nil,
+}

@@ -22,8 +22,8 @@ type Location struct {
 	Longitude float32 `json:"lng"`
 }
 
-// GetRentalByIDResponse is a server response getting a single rental by id.
-type GetRentalByIDResponse struct {
+// Rental is a contract for the rental object.
+type Rental struct {
 	ID              int32   `json:"id"`
 	Name            string  `json:"name"`
 	Description     string  `json:"description"`
@@ -37,3 +37,8 @@ type GetRentalByIDResponse struct {
 	Price           Price
 	Location        Location
 }
+
+// GetRentalByIDResponse is a server response getting a single rental by id.
+type GetRentalByIDResponse Rental
+
+type ListRentalsResponse []*Rental
