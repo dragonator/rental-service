@@ -75,7 +75,7 @@ func (qb *QueryBuilder) String() string {
 	var sb strings.Builder
 
 	sb.WriteString(qb.queryType)
-	sb.WriteString(strings.Join(qb.columns, ","))
+	sb.WriteString(strings.Join(qb.columns, ", "))
 	sb.WriteString(" FROM ")
 	sb.WriteString(qb.targetTable)
 
@@ -91,6 +91,11 @@ func (qb *QueryBuilder) String() string {
 		sb.WriteString(strings.Join(qb.conditions, " AND "))
 	}
 
+	if qb.orderBy != nil {
+		sb.WriteString(" ORDER BY ")
+		sb.WriteString(*qb.orderBy)
+	}
+
 	if qb.limit != nil {
 		sb.WriteString(" LIMIT ")
 		sb.WriteString(strconv.Itoa(*qb.limit))
@@ -99,11 +104,6 @@ func (qb *QueryBuilder) String() string {
 	if qb.offset != nil {
 		sb.WriteString(" OFFSET ")
 		sb.WriteString(strconv.Itoa(*qb.offset))
-	}
-
-	if qb.orderBy != nil {
-		sb.WriteString(" ORDER BY ")
-		sb.WriteString(*qb.orderBy)
 	}
 
 	return sb.String()
