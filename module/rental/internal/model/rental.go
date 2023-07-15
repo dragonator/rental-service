@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 // Rental is a model for the rental entity.
 type Rental struct {
 	ID              int32
@@ -22,8 +20,6 @@ type Rental struct {
 	Latitude        float32
 	Longitude       float32
 	PrimaryImageURL string
-	Created         time.Time
-	Updated         time.Time
 
 	User *User
 }

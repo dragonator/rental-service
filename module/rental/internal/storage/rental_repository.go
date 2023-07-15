@@ -31,8 +31,6 @@ var (
 		"rentals.lat",
 		"rentals.lng",
 		"rentals.primary_image_url",
-		"rentals.created",
-		"rentals.updated",
 	}
 	userColumns = []string{
 		"users.id as users_id",
@@ -86,7 +84,7 @@ func (rr *RentalRepository) List(ctx context.Context, filters *RentalFilters) (m
 
 	rows, err := rr.db.QueryContext(ctx, sqlQuery)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("listing rentals: %w", err)
 	}
 
 	defer rows.Close()
@@ -198,8 +196,6 @@ func scanRental(row rowScanner) (*model.Rental, error) {
 		&rental.Latitude,
 		&rental.Longitude,
 		&rental.PrimaryImageURL,
-		&rental.Created,
-		&rental.Updated,
 		&rental.User.ID,
 		&rental.User.FirstName,
 		&rental.User.LastName,
