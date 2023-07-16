@@ -8,7 +8,9 @@ import (
 )
 
 // RentalStore is a contract to a rental storage.
+//
+//go:generate moq -rm -pkg rentalfetching_test -out rental_store_mock_test.go . RentalStore
 type RentalStore interface {
-	GetByID(ctx context.Context, rentalID string) (*model.Rental, error)
+	GetByID(ctx context.Context, rentalID int) (*model.Rental, error)
 	List(ctx context.Context, filters *storage.RentalFilters) (model.Rentals, error)
 }

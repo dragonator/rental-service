@@ -3,7 +3,9 @@ module github.com/dragonator/rental-service
 go 1.20
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/go-chi/chi v1.5.4
+	github.com/google/go-cmp v0.5.9
 	github.com/gorilla/schema v1.2.0
 	github.com/jackc/pgx/v5 v5.4.2
 	github.com/simukti/sqldb-logger v0.0.0-20230108155151-646c1a075551

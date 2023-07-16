@@ -2,8 +2,11 @@ package rentalfetching
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
+	"github.com/dragonator/rental-service/module/rental/internal/http/service/svc"
 	"github.com/dragonator/rental-service/module/rental/internal/model"
 	"github.com/dragonator/rental-service/module/rental/internal/storage"
 )
@@ -21,8 +24,11 @@ func NewOperation(rentalStore RentalStore) *Operation {
 }
 
 // GetRentalByID returns a rental for the given id.
-func (o *Operation) GetRentalByID(ctx context.Context, rentalID string) (*model.Rental, error) {
+func (o *Operation) GetRentalByID(ctx context.Context, rentalID int) (*model.Rental, error) {
 	rental, err := o.rentalStore.GetByID(ctx, rentalID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("%w: rental with id %d", svc.ErrNotFound, rentalID)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("operation GetRentalByID: %w", err)
 	}

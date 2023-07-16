@@ -34,6 +34,7 @@ func errorResponse(w http.ResponseWriter, err error) {
 	}
 
 	w.WriteHeader(http.StatusInternalServerError)
+	er.Error = http.StatusText(http.StatusInternalServerError)
 	json.NewEncoder(w).Encode(er)
 }
 

@@ -15,7 +15,7 @@ const (
 	_samplingConfigThereafter = 100
 )
 
-var errInvalidLogLevel = fmt.Errorf("invalid log level")
+var _errInvalidLogLevel = fmt.Errorf("invalid log level")
 
 // Logger is a logger implementation.
 type Logger struct {
@@ -98,7 +98,7 @@ func parseLogLevel(level string) (zapcore.Level, error) {
 	case "INFO":
 		newLevel = zap.InfoLevel
 	default:
-		return newLevel, fmt.Errorf("%w: %s", errInvalidLogLevel, level)
+		return newLevel, fmt.Errorf("%w: %s", _errInvalidLogLevel, level)
 	}
 
 	return newLevel, nil

@@ -31,3 +31,19 @@ volumes-down:
 db-down:
 	@docker-compose down --remove-orphans
 	@docker-compose ps
+
+
+.PHONY: generate
+generate:
+	@find . -name "*_mock_test.go" | xargs rm
+	@go generate ./...
+
+
+.PHONY: test
+test: generate
+	@go test ./...
+
+
+.PHONY: server-start
+server-start: generate
+	@go run cmd/server/main.go

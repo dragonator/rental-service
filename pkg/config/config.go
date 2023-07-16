@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-var errUndefinedEnvVar = errors.New("undefined environment variable")
+var _errUndefinedEnvVar = errors.New("undefined environment variable")
 
 // Config hold the service config.
 type Config struct {
@@ -27,17 +27,17 @@ func New() (*Config, error) {
 
 	serverPort, defined := os.LookupEnv("SERVER_PORT")
 	if !defined {
-		return nil, fmt.Errorf("%w: SERVER_PORT", errUndefinedEnvVar)
+		return nil, fmt.Errorf("%w: SERVER_PORT", _errUndefinedEnvVar)
 	}
 
 	loggerLevel, defined := os.LookupEnv("LOGGER_LEVEL")
 	if !defined {
-		return nil, fmt.Errorf("%w: LOGGER_LEVEL", errUndefinedEnvVar)
+		return nil, fmt.Errorf("%w: LOGGER_LEVEL", _errUndefinedEnvVar)
 	}
 
 	nearThresholdRadius, defined := os.LookupEnv("NEAR_THRESHOLD_RADIUS_IN_MILES")
 	if !defined {
-		return nil, fmt.Errorf("%w: NEAR_THRESHOLD_RADIUS_IN_MILES", errUndefinedEnvVar)
+		return nil, fmt.Errorf("%w: NEAR_THRESHOLD_RADIUS_IN_MILES", _errUndefinedEnvVar)
 	}
 
 	nearThresholdRadiusInMiles, err := strconv.Atoi(nearThresholdRadius)

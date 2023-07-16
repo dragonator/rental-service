@@ -6,17 +6,23 @@ import (
 	"net/http"
 
 	"github.com/dragonator/rental-service/pkg/config"
-	"github.com/dragonator/rental-service/pkg/logger"
 )
+
+// Logger is a contract to a logger implementation.
+type Logger interface {
+	Info(args ...interface{})
+	Infof(template string, args ...interface{})
+	Fatalf(template string, args ...interface{})
+}
 
 // Service holds functionality for starting and stopping an HTTP server.
 type Service struct {
-	logger *logger.Logger
+	logger Logger
 	server *http.Server
 }
 
 // New is a construction function for the HTTP server.
-func New(config *config.Config, logger *logger.Logger, router http.Handler) (*Service, error) {
+func New(config *config.Config, logger Logger, router http.Handler) (*Service, error) {
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", config.ServerPort),
 		Handler: router,
@@ -43,7 +49,7 @@ func (s *Service) Start() {
 func (s *Service) Stop() {
 	if err := s.server.Shutdown(context.Background()); err != nil {
 		s.logger.Fatalf("Shutdown() failed: %v", err)
-	} else {
-		s.logger.Info("HTTP server shut down gracefully.")
 	}
+
+	s.logger.Info("HTTP server shut down gracefully.")
 }

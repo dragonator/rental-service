@@ -31,8 +31,6 @@ var (
 		"rentals.lat",
 		"rentals.lng",
 		"rentals.primary_image_url",
-		"rentals.created",
-		"rentals.updated",
 	}
 	userColumns = []string{
 		"users.id as users_id",
@@ -61,7 +59,7 @@ func NewRentalRepository(config *config.Config, db *sql.DB) *RentalRepository {
 
 // GetByID returns a single rental object corresponding to the requested id.
 // If no such rental exists it returns an error.
-func (rr *RentalRepository) GetByID(ctx context.Context, rentalID string) (*model.Rental, error) {
+func (rr *RentalRepository) GetByID(ctx context.Context, rentalID int) (*model.Rental, error) {
 	qb := NewQueryBuilder().
 		Select().
 		Columns(rentalColums...).
@@ -86,7 +84,7 @@ func (rr *RentalRepository) List(ctx context.Context, filters *RentalFilters) (m
 
 	rows, err := rr.db.QueryContext(ctx, sqlQuery)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("listing rentals: %w", err)
 	}
 
 	defer rows.Close()
@@ -111,13 +109,17 @@ func (rr *RentalRepository) buildListQuery(f *RentalFilters) string {
 		From("rentals").
 		Join("users ON users.id = rentals.user_id")
 
+	if f == nil {
+		return qb.String()
+	}
+
 	if len(f.IDs) > 0 {
 		ids := make([]string, 0, len(f.IDs))
 		for _, id := range f.IDs {
 			ids = append(ids, strconv.Itoa(int(id)))
 		}
 
-		qb.Where(fmt.Sprintf("rentals.id IN (%s)", strings.Join(ids, ",")))
+		qb.Where(fmt.Sprintf("rentals.id IN (%s)", strings.Join(ids, ", ")))
 	}
 
 	if f.PriceMin != nil {
@@ -130,11 +132,11 @@ func (rr *RentalRepository) buildListQuery(f *RentalFilters) string {
 
 	if f.Near != nil {
 		qb.Columns(
-			fmt.Sprintf("ABS(lat - %f) as a", f.Near.Latitude),
-			fmt.Sprintf("ABS(lng - %f) as b", f.Near.Longitude),
+			fmt.Sprintf("ABS(lat - %.2f) as a", f.Near.Latitude),
+			fmt.Sprintf("ABS(lng - %.2f) as b", f.Near.Longitude),
 		)
-		qb.Where(fmt.Sprintf("ABS(lat - %f) <= %d", f.Near.Latitude, rr.nearThresholdRadius))
-		qb.Where(fmt.Sprintf("ABS(lng - %f) <= %d", f.Near.Longitude, rr.nearThresholdRadius))
+		qb.Where(fmt.Sprintf("ABS(lat - %.2f) <= %d", f.Near.Latitude, rr.nearThresholdRadius))
+		qb.Where(fmt.Sprintf("ABS(lng - %.2f) <= %d", f.Near.Longitude, rr.nearThresholdRadius))
 	}
 
 	if f.Near != nil {
@@ -145,7 +147,7 @@ func (rr *RentalRepository) buildListQuery(f *RentalFilters) string {
 			Columns(newRentalColumns...).
 			Columns("subquery.users_id", "subquery.first_name", "subquery.last_name").
 			From(fmt.Sprintf("(%s) subquery", qb.String())).
-			Where(fmt.Sprintf("SQRT(a*a + b*b) <= %d", rr.nearThresholdRadius))
+			Where(fmt.Sprintf("SQRT(POW(a, 2) + POW(b, 2)) <= %d", rr.nearThresholdRadius))
 
 		qb = qbTmp
 	}
@@ -198,8 +200,6 @@ func scanRental(row rowScanner) (*model.Rental, error) {
 		&rental.Latitude,
 		&rental.Longitude,
 		&rental.PrimaryImageURL,
-		&rental.Created,
-		&rental.Updated,
 		&rental.User.ID,
 		&rental.User.FirstName,
 		&rental.User.LastName,
