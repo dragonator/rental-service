@@ -34,11 +34,15 @@ Filters for listing:
 
 ## Run the service
 
-1. Start the db:
+1. Init environment file:
+
+    > make init
+
+2.  Start the db:
 
     > make db-up
 
-2. Run the service:
+3. Run the service:
 
     > make server-start
 
