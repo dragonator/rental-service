@@ -49,7 +49,7 @@ func (s *Service) Start() {
 func (s *Service) Stop() {
 	if err := s.server.Shutdown(context.Background()); err != nil {
 		s.logger.Fatalf("Shutdown() failed: %v", err)
-	} else {
-		s.logger.Info("HTTP server shut down gracefully.")
 	}
+
+	s.logger.Info("HTTP server shut down gracefully.")
 }
