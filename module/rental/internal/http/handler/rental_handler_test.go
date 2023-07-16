@@ -147,7 +147,7 @@ func TestRentalHandler_GetRentalByID(t *testing.T) {
 			}
 
 			if responseRecorder.Code != tc.expectedCode {
-				t.Errorf("Unexpected status code:\nexpected %d\ngot:      %d", tc.expectedCode, responseRecorder.Code)
+				t.Fatalf("Unexpected status code:\nexpected %d\ngot:      %d", tc.expectedCode, responseRecorder.Code)
 			}
 
 			if tc.expectedCode == http.StatusOK {
@@ -155,22 +155,22 @@ func TestRentalHandler_GetRentalByID(t *testing.T) {
 
 				err := json.NewDecoder(responseRecorder.Body).Decode(&responseBody)
 				if err != nil {
-					t.Errorf("Failed to decode response body: %v", err)
+					t.Fatalf("Failed to decode response body: %v", err)
 				}
 
 				if !cmp.Equal(responseBody, tc.expectedRental) {
-					t.Errorf("Unexpected rental:\nexpected: %v\ngot:      %v", tc.expectedRental, responseBody)
+					t.Fatalf("Unexpected rental:\nexpected: %v\ngot:      %v", tc.expectedRental, responseBody)
 				}
 			} else {
 				var errorResponse contract.ErrorResponse
 
 				err := json.NewDecoder(responseRecorder.Body).Decode(&errorResponse)
 				if err != nil {
-					t.Errorf("Failed to decode error response body: %v", err)
+					t.Fatalf("Failed to decode error response body: %v", err)
 				}
 
 				if !cmp.Equal(errorResponse, tc.expectedError) {
-					t.Errorf("expected error message %s, but got %s", tc.expectedError, errorResponse.Message)
+					t.Fatalf("Unexpected error message:\nexpected: %s\ngot      %s", tc.expectedError, errorResponse.Message)
 				}
 			}
 		})
@@ -469,7 +469,7 @@ func TestRentalHandler_ListRentals(t *testing.T) {
 			}
 
 			if responseRecorder.Code != tc.expectedCode {
-				t.Errorf("Unexpected status code:\nexpected %d\ngot:      %d", tc.expectedCode, responseRecorder.Code)
+				t.Fatalf("Unexpected status code:\nexpected %d\ngot:      %d", tc.expectedCode, responseRecorder.Code)
 			}
 
 			if tc.expectedCode == http.StatusOK {
@@ -477,22 +477,22 @@ func TestRentalHandler_ListRentals(t *testing.T) {
 
 				err := json.NewDecoder(responseRecorder.Body).Decode(&responseBody)
 				if err != nil {
-					t.Errorf("Failed to decode response body: %v", err)
+					t.Fatalf("Failed to decode response body: %v", err)
 				}
 
 				if !cmp.Equal(responseBody, tc.expectedRental) {
-					t.Errorf("Unexpected rental:\nexpected: %v\ngot:      %v", tc.expectedRental, responseBody)
+					t.Fatalf("Unexpected rental:\nexpected: %v\ngot:      %v", tc.expectedRental, responseBody)
 				}
 			} else {
 				var errorResponse contract.ErrorResponse
 
 				err := json.NewDecoder(responseRecorder.Body).Decode(&errorResponse)
 				if err != nil {
-					t.Errorf("Failed to decode error response body: %v", err)
+					t.Fatalf("Failed to decode error response body: %v", err)
 				}
 
 				if !cmp.Equal(errorResponse, tc.expectedError) {
-					t.Errorf("expected error message %s, but got %s", tc.expectedError, errorResponse.Message)
+					t.Fatalf("expected error message %s, but got %s", tc.expectedError, errorResponse.Message)
 				}
 			}
 		})

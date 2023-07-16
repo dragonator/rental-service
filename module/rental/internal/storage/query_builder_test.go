@@ -117,7 +117,7 @@ func TestQueryBuilder(t *testing.T) {
 			query := qb.String()
 
 			if strings.TrimSpace(query) != test.expectedQuery {
-				t.Errorf("\nExpected: %s\ngot: %s\n", test.expectedQuery, query)
+				t.Fatalf("\nExpected: %s\ngot: %s\n", test.expectedQuery, query)
 			}
 		})
 	}
