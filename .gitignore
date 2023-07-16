@@ -28,3 +28,6 @@ server.log
 
 # VScode
 cmd/server/__debug_bin*
+
+# Mocks
+*_mock.go

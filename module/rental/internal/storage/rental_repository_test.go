@@ -303,7 +303,7 @@ func TestRentalRepository_List(t *testing.T) {
 	}
 }
 
-// Helper function to create an int64 pointer
+// Helper function to create a pointers to values.
 func toPtr[T any](v T) *T {
 	return &v
 }
