@@ -23,12 +23,25 @@ type RentalFilters struct {
 }
 
 // RentalSortFields defines allowed fields for sorting.
-var RentalSortFields = map[string]*struct{}{
-	"ids":       nil,
-	"price_min": nil,
-	"price_max": nil,
-	"near":      nil,
-	"sort":      nil,
-	"limit":     nil,
-	"offset":    nil,
+var RentalSortFields = []string{
+	"id",
+	"name",
+	"type",
+	"make",
+	"model",
+	"year",
+	"length",
+	"sleeps",
+	"price_per_day",
+}
+
+// SortFieldAllowed checks whether the given field in allowed to sort rentals by.
+func SortFieldAllowed(field string) bool {
+	for _, f := range RentalSortFields {
+		if field == f {
+			return true
+		}
+	}
+
+	return false
 }

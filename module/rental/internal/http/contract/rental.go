@@ -51,6 +51,9 @@ type ListRentalsQuery struct {
 }
 
 // GetRentalByIDResponse is a server response getting a single rental by id.
-type GetRentalByIDResponse Rental
+type GetRentalByIDResponse struct {
+	Rental
+}
 
+// ListRentalsResponse is a server response listing rentals by filters.
 type ListRentalsResponse []*Rental

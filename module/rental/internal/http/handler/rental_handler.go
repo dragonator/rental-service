@@ -16,6 +16,8 @@ import (
 )
 
 // RentalFetchingOp is a contract to a rental fetching operation.
+//
+//go:generate moq -rm -pkg handler_test -out rental_fetching_op_mock_test.go . RentalFetchingOp
 type RentalFetchingOp interface {
 	GetRentalByID(ctx context.Context, rentalID int) (*model.Rental, error)
 	ListRentals(ctx context.Context, filters *storage.RentalFilters) (model.Rentals, error)
@@ -84,6 +86,13 @@ func rentalFiltersFromRequest(r *http.Request) (*storage.RentalFilters, error) {
 
 	if err := schema.NewDecoder().Decode(&query, r.Form); err != nil {
 		return nil, fmt.Errorf("%w: unmashalling query: %w", svc.ErrInvalidQueryParameters, err)
+	}
+
+	if query.Sort != nil && !storage.SortFieldAllowed(*query.Sort) {
+		return nil, fmt.Errorf("%w: unexpected sort field: expected one of %v",
+			svc.ErrInvalidQueryParameters,
+			storage.RentalSortFields,
+		)
 	}
 
 	filters := &storage.RentalFilters{
