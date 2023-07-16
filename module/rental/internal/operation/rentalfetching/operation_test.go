@@ -1,4 +1,4 @@
-package rentalfetching
+package rentalfetching_test
 
 import (
 	"context"
@@ -6,10 +6,12 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+
 	"github.com/dragonator/rental-service/module/rental/internal/http/service/svc"
 	"github.com/dragonator/rental-service/module/rental/internal/model"
+	"github.com/dragonator/rental-service/module/rental/internal/operation/rentalfetching"
 	"github.com/dragonator/rental-service/module/rental/internal/storage"
-	"github.com/google/go-cmp/cmp"
 )
 
 var (
@@ -113,7 +115,7 @@ func TestOperation_GetRentalByID(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
 
-			operation := NewOperation(tc.mockRentalStore)
+			operation := rentalfetching.NewOperation(tc.mockRentalStore)
 
 			rental, err := operation.GetRentalByID(ctx, tc.rentalID)
 
@@ -158,8 +160,8 @@ func TestOperation_ListRentals(t *testing.T) {
 			},
 			filters: &storage.RentalFilters{
 				IDs:      []int32{1, 2},
-				PriceMin: toPtr(int64(12)),
-				PriceMax: toPtr(int64(-38)),
+				PriceMin: toPtr[int64](12),
+				PriceMax: toPtr[int64](-38),
 				Near: &storage.Location{
 					Latitude:  34.3,
 					Longitude: -83.23,
@@ -190,7 +192,7 @@ func TestOperation_ListRentals(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
 
-			operation := NewOperation(tc.mockRentalStore)
+			operation := rentalfetching.NewOperation(tc.mockRentalStore)
 
 			rentals, err := operation.ListRentals(ctx, tc.filters)
 

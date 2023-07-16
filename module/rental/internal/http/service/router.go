@@ -21,7 +21,7 @@ func NewRouter(rh RentalHandler) http.Handler {
 		Path       string
 		HandleFunc func(string, string) func(w http.ResponseWriter, r *http.Request)
 	}{
-		{router.Get, "GET", "/rental/{id}", rh.GetRentalByID},
+		{router.Get, "GET", "/rentals/{id}", rh.GetRentalByID},
 		{router.Get, "GET", "/rentals", rh.ListRentals},
 	}
 

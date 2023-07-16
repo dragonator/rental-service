@@ -204,8 +204,8 @@ func TestRentalRepository_List(t *testing.T) {
 		{
 			name: "List with price range filter",
 			filters: &storage.RentalFilters{
-				PriceMin: toPtr(int64(1500)),
-				PriceMax: toPtr(int64(2000)),
+				PriceMin: toPtr[int64](1500),
+				PriceMax: toPtr[int64](2000),
 			},
 			expectedResult: model.Rentals{
 				_rentals[1],
@@ -257,6 +257,40 @@ func TestRentalRepository_List(t *testing.T) {
 			mockFunc: func(mock sqlmock.Sqlmock) {
 				selectQuery := fmt.Sprintf(sq, strings.Join(_columns, ", "))
 				mock.ExpectQuery(selectQuery + " ORDER BY price_per_day").
+					WillReturnRows(sqlmock.NewRows(_columns).
+						AddRow(rentalValues(_rentals[0])...).
+						AddRow(rentalValues(_rentals[1])...))
+			},
+		},
+		{
+			name: "List with limit filter",
+			filters: &storage.RentalFilters{
+				Pagination: storage.Pagination{
+					Limit: toPtr(3),
+				},
+			},
+			expectedResult: _rentals,
+			expectedError:  nil,
+			mockFunc: func(mock sqlmock.Sqlmock) {
+				selectQuery := fmt.Sprintf(sq, strings.Join(_columns, ", "))
+				mock.ExpectQuery(selectQuery + " LIMIT 3").
+					WillReturnRows(sqlmock.NewRows(_columns).
+						AddRow(rentalValues(_rentals[0])...).
+						AddRow(rentalValues(_rentals[1])...))
+			},
+		},
+		{
+			name: "List with offset filter",
+			filters: &storage.RentalFilters{
+				Pagination: storage.Pagination{
+					Offset: toPtr(8),
+				},
+			},
+			expectedResult: _rentals,
+			expectedError:  nil,
+			mockFunc: func(mock sqlmock.Sqlmock) {
+				selectQuery := fmt.Sprintf(sq, strings.Join(_columns, ", "))
+				mock.ExpectQuery(selectQuery + " OFFSET 8").
 					WillReturnRows(sqlmock.NewRows(_columns).
 						AddRow(rentalValues(_rentals[0])...).
 						AddRow(rentalValues(_rentals[1])...))
