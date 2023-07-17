@@ -35,7 +35,7 @@ db-down:
 
 .PHONY: generate
 generate:
-	@find . -name "*_mock_test.go" | xargs rm
+	@find . -name "*_mock_test.go" | xargs -r rm
 	@go generate ./...
 
 
