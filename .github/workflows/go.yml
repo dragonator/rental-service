@@ -26,6 +26,6 @@ jobs:
 
     - name: Test
       run: |
-        go install github.com/moq/moq@latest
+        go install github.com/matryer/moq@latest
         make generate
         make test
