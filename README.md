@@ -30,6 +30,10 @@ The service exposes two endpoints for requesting data:
 
     go install github.com/moq/moq@latest
 
+#### Init environment file:
+
+    make init
+
 #### Generate the mocks:
 
     make generate
