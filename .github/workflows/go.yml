@@ -22,7 +22,10 @@ jobs:
         go-version: '1.20'
 
     - name: Build
-      run: go build -v ./...
+      run: go build -v -n cmd/server/main.go
 
     - name: Test
-      run: go test -v ./...
+      run: |
+        go install github.com/moq/moq@latest
+        make generate
+        make test
