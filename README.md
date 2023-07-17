@@ -1,5 +1,7 @@
 # rental-service
 
+[![Go Build](https://github.com/dragonator/rental-service/actions/workflows/go.yml/badge.svg)](https://github.com/dragonator/rental-service/actions/workflows/go.yml)
+
 The service exposes two endpoints for requesting data:
 
 `GET /rentals/{id}` - get rental by id
