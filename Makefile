@@ -3,12 +3,12 @@ envfile ?= .env
 -include $(envfile)
 
 define export_envfile
-ifneq ("$(wildcard $(1))","")
-	export $(shell sed 's/=.*//' $(envfile))
-endif
+	export $(shell sed 's/=.*//' $(1))
 endef
 
-$(eval $(call export_envfile,$(envfile)))
+ifneq ("$(wildcard $(envfile))", "")
+	$(eval $(call export_envfile,$(envfile)))
+endif
 
 .PHONY: init
 init:
