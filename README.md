@@ -6,7 +6,7 @@ The service exposes two endpoints for requesting data:
 
 `GET /rentals` - list filtered rentals
 
-Filters for listing:
+#### Filters for listing:
 
 * `ids` - list of integers representing rental ids
 * `price_min` - integer value to filter for minimum price
@@ -16,40 +16,46 @@ Filters for listing:
 * `limit` - integer value to specify a pagination limit
 * `offset` - integer value to specify a pagination offset
 
-    
+#### Example queries:
+    rentals?ids=3,4,5
+    rentals?price_min=9000&price_max=75000
+    rentals?limit=3&offset=6
+    rentals?near=33.64,-117.93
+    rentals?sort=price
+    rentals?near=33.64,-117.93&price_min=9000&price_max=75000&limit=3&offset=6&sort=price
 
 ## Run the tests
 
-1. Install `github.com/moq/moq` to generate test mocks:
+#### Install `github.com/moq/moq` to generate test mocks:
 
-    > go install github.com/moq/moq@latest
+    go install github.com/moq/moq@latest
 
-2.  Generate the mocks:
+#### Generate the mocks:
 
-    > make generate
+    make generate
 
-3. Run the tests:
+#### Run the tests:
 
-    > make test
+    make test
 
 ## Run the service
 
-1. Init environment file:
+#### Init environment file:
 
-    > make init
+    make init
 
-2.  Start the db:
+#### Start the db:
 
-    > make db-up
+    make db-up
 
-3. Run the service:
+#### Run the service:
 
-    > make server-start
+    make server-start
 
 ## Stop the database
 
-    > make db-down
+    make db-down
 
 ## Stop the database and remove volumes
 
-    > make volumes-down
+    make volumes-down
