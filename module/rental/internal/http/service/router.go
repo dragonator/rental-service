@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// RentalHandler is a contract to a rental handler.
 type RentalHandler interface {
 	GetRentalByID(method, path string) func(w http.ResponseWriter, r *http.Request)
 	ListRentals(method, path string) func(w http.ResponseWriter, r *http.Request)
