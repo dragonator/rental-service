@@ -27,7 +27,7 @@ type RentalModule struct {
 func NewRentalModule(config *config.Config, logger *logger.Logger) (*RentalModule, error) {
 	db, err := db.OpenPGX(config, logger.Desugar())
 	if err != nil {
-		return nil, fmt.Errorf("creating rental model: %w", err)
+		return nil, fmt.Errorf("creating rental module: %w", err)
 	}
 
 	rentalStore := storage.NewRentalRepository(config, db)
@@ -37,7 +37,7 @@ func NewRentalModule(config *config.Config, logger *logger.Logger) (*RentalModul
 
 	rentalService, err := service.New(config, logger, router)
 	if err != nil {
-		return nil, fmt.Errorf("creating rental model: %w", err)
+		return nil, fmt.Errorf("creating rental module: %w", err)
 	}
 
 	return &RentalModule{
