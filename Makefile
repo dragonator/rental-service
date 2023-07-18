@@ -45,5 +45,5 @@ test: generate
 
 
 .PHONY: server-start
-server-start: generate
+server-start:
 	@go run cmd/server/main.go
